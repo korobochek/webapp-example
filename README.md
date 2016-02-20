@@ -20,6 +20,20 @@ To run tests use the following command:
     
     lein test
 
+## Database Migration
+
+To create db migration, run:
+
+    lein clj-sql-up create <migration-name>
+
+To migrate db, run:
+
+    lein clj-sql-up migrate
+
+To rollback migration, run:
+
+    lein clj-sql-up rollback
+
 ## License
 
 Copyright © 2016 FIXME
