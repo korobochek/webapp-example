@@ -30,6 +30,10 @@ To migrate db, run:
 
     lein clj-sql-up migrate
 
+To migrate test db, run:
+
+    ENV=test lein clj-sql-up migrate
+
 To rollback migration, run:
 
     lein clj-sql-up rollback
