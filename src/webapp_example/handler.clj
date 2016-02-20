@@ -13,7 +13,7 @@
                           (-> (response {})
                               (status 201))))
     (GET "/" [] (response (item/all)))
-    (GET "/:item-id" [item-id] (response (item/with-id item-id)))))
+    (GET "/:item-id" [item-id] (response (item/with-id (read-string item-id))))))
 
 (defroutes app-routes
   item-routes
