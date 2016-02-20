@@ -5,6 +5,7 @@
 
 (defn clear-db [test-fn]
   (jdbc/delete! subject/db-spec :items [])
+  (jdbc/db-do-commands subject/db-spec "ALTER SEQUENCE items_id_seq RESTART WITH 1")
   (test-fn))
 
 (use-fixtures :each clear-db)
@@ -17,6 +18,16 @@
     (is (= "test" (:name (first (subject/all))))))
   (testing "returns record with correct quantity"
     (is (= 1 (:quantity (first (subject/all)))))))
+
+(deftest with-id
+  (testing "when can find item by id"
+    (jdbc/insert! subject/db-spec :items {:name "test" :quantity 1})
+    (testing "returns one item when searching by id"
+      (is (= 1 (count (subject/with-id 1))))))
+  (testing "when unable to find item by id"
+    (jdbc/delete! subject/db-spec :items [])
+    (testing "returns zero items when no items found"
+      (is (= 0 (count (subject/with-id 1)))))))
 
 (deftest save
   (subject/save! {:name "blah" :quantity 10})
