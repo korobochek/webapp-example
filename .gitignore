@@ -1,3 +1,5 @@
+/.idea
+webapp-example.iml
 /target
 /lib
 /classes
