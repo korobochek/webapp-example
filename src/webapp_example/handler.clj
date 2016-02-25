@@ -5,15 +5,19 @@
             [webapp-example.models.item :as item]
             [ring.middleware.json :refer [wrap-json-response wrap-json-body]]
             [clojure.data.json :refer [write-str]]
-            [ring.util.response :refer [response status]]))
+            [ring.util.response :refer [response status content-type]]))
+
+(defn build-json-response [body resp-status]
+  (-> (response body)
+      (content-type "application/json")
+      (status resp-status)))
 
 (def item-routes
   (context "/items" []
     (POST "/" request (do (item/save! (:body request))
-                          (-> (response {})
-                              (status 201))))
-    (GET "/" [] (response (item/all)))
-    (GET "/:item-id" [item-id] (response (item/with-id (read-string item-id))))))
+                          (build-json-response {:message "Created"} 201)))
+    (GET "/" [] (build-json-response (item/all) 200))
+    (GET "/:item-id" [item-id] (build-json-response (item/with-id (read-string item-id)) 200))))
 
 (defroutes app-routes
   item-routes
@@ -25,7 +29,7 @@
     (try
       (handler request)
       (catch Exception e
-        (-> (response (write-str {:message (.getMessage e)})) (status 500))))))
+        (build-json-response (write-str {:message (.getMessage e)}) 500)))))
 
 (def app
   (-> app-routes

@@ -28,7 +28,9 @@
     (testing "post to /items with application/json content type"
       (let [response (app (mock/content-type (mock/request :post "/items" (json/write-str post-item)) "application/json"))]
         (testing "should return status 201"
-          (is (= (:status response) 201))))))
+          (is (= (:status response) 201)))
+        (testing "should return :message created"
+          (is (= (:body response) (json/write-str {:message "Created"})))))))
 
   (testing "exception handling"
     (with-redefs [webapp-example.models.item/all (fn [] (throw (Exception. "error message")))]
